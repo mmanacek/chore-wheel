@@ -20,6 +20,7 @@ Chore Wheel and Personal Assistant
 </head>
 <body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500/30">
 
+    <!-- HEADER BLOCK -->
     <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-900 px-4 py-4">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div>
@@ -30,6 +31,7 @@ Chore Wheel and Personal Assistant
                 </div>
             </div>
             
+            <!-- PROGRESS DIAL -->
             <div class="relative flex items-center justify-center w-12 h-12">
                 <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
                     <path class="text-slate-900" stroke-width="3.5" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
@@ -40,8 +42,13 @@ Chore Wheel and Personal Assistant
         </div>
     </header>
 
+    <!-- MAIN INTERACTIVE CONTAINER -->
     <main class="flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-6 overflow-y-auto custom-scrollbar">
         
+        <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
+        <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
+
+        <!-- MORNING TIMELINE SECTION -->
         <div id="sec-morning" class="space-y-2.5">
             <div class="flex items-center gap-2 px-1 mb-1">
                 <i data-lucide="sunrise" class="w-4 h-4 text-amber-400"></i>
@@ -50,6 +57,7 @@ Chore Wheel and Personal Assistant
             <div id="container-morning" class="space-y-2"></div>
         </div>
 
+        <!-- AFTERNOON TIMELINE SECTION -->
         <div id="sec-afternoon" class="space-y-2.5">
             <div class="flex items-center gap-2 px-1 mb-1">
                 <i data-lucide="sun" class="w-4 h-4 text-emerald-400"></i>
@@ -58,6 +66,7 @@ Chore Wheel and Personal Assistant
             <div id="container-afternoon" class="space-y-2"></div>
         </div>
 
+        <!-- EVENING TIMELINE SECTION -->
         <div id="sec-evening" class="space-y-2.5">
             <div class="flex items-center gap-2 px-1 mb-1">
                 <i data-lucide="moon" class="w-4 h-4 text-indigo-400"></i>
@@ -68,6 +77,7 @@ Chore Wheel and Personal Assistant
 
     </main>
 
+    <!-- DEBUG SYSTEM FOOTER -->
     <footer class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950 border-t border-slate-900 z-40 bg-gradient-to-t from-slate-950 via-slate-950 to-slate-950/95">
         <div class="max-w-md mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 flex-1">
@@ -82,29 +92,36 @@ Chore Wheel and Personal Assistant
         </div>
     </footer>
 
+    <!-- ENGINE CODE -->
     <script>
-        // Core data objects mapped directly from plain text parameters
         const baseDailyHabits = {
-            morning: [
-                "Get ready",
-                "Wipe bathroom surfaces",
-                "Moisturize",
-                "Make bed",
-                "Tidy 1 room"
-            ],
-            evening: [
-                "Dishes",
-                "Wipe kitchen counters and table",
-                "Spot clean kitchen/dining floors",
-                "Floss"
-            ]
+            morning: ["Get ready", "Wipe bathroom surfaces", "Moisturize", "Make bed", "Tidy 1 room"],
+            evening: ["Dishes", "Wipe kitchen counters and table", "Spot clean kitchen/dining floors", "Floss"]
         };
 
-        // Date simulator logic variable initialization
+        // Budget-friendly seasonal fibermaxxing ideas cycling dynamically by month quadrant
+        const fibermaxxingDatabase = [
+            {
+                ingredients: ["Rolled Oats", "Black Beans", "Carrots", "Chia Seeds", "Cabbage"],
+                menu: ["Warm savory black bean & oat bowls", "Slow-cooked garlic shredded cabbage & rice skillet", "Simple chia seed overnight pudding"]
+            },
+            {
+                ingredients: ["Brown Lentils", "Sweet Potatoes", "Spinach", "Whole Wheat Bread", "Bananas"],
+                menu: ["Thick cumin brown lentil dal with rice", "Toasted whole wheat avocado/hummus toast smash", "Baked sweet potato boats stuffed with greens"]
+            },
+            {
+                ingredients: ["Canned Chickpeas", "Broccoli", "Pinto Beans", "Flaxseed", "Onions"],
+                menu: ["Crispy pan-seared lemon chickpea wraps", "Pinto bean & onion dynamic skillet tacos", "Steam-charred broccoli over loaded fiber grain bowls"]
+            },
+            {
+                ingredients: ["Split Peas", "Whole Wheat Pasta", "Kidney Beans", "Apples", "Sunflower Seeds"],
+                menu: ["Classic rich green split pea home soup", "Whole wheat pasta tossed with white beans & olive oil", "Apple slices paired with sunflower seed seed butter scaling"]
+            }
+        ];
+
         let activeTrackingDate = new Date();
 
         document.addEventListener('DOMContentLoaded', () => {
-            // Preset simulated date input value field to today's local target
             const dateInput = document.getElementById('date-simulator');
             dateInput.value = activeTrackingDate.toISOString().split('T')[0];
             
@@ -122,43 +139,89 @@ Chore Wheel and Personal Assistant
             return `chore_wheel_v2_${date.toISOString().split('T')[0]}`;
         }
 
-        // Deep execution scheduler tracking engines
         function processAppEngineCycle() {
             const currentDayNumber = activeTrackingDate.getDate();
             const lastDigit = currentDayNumber % 10;
+            const dayOfWeek = activeTrackingDate.getDay(); 
             
-            // Render Header Text Strings
             const options = { weekday: 'long', month: 'short', day: 'numeric' };
             document.getElementById('current-date').innerText = activeTrackingDate.toLocaleDateString('en-US', options);
             
             const badge = document.getElementById('digit-badge');
             badge.innerText = `Day Ending in [${lastDigit}]`;
 
-            // Compute structural arrays
-            const schedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit);
+            // Evaluate Sunday Brainstormer Block Trigger
+            renderSundayBrainstormer(dayOfWeek, currentDayNumber);
+
+            const schedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
             renderTimelineColumns(schedule);
             updateProgressMetrics(schedule.totalTaskCount);
             lucide.createIcons();
         }
 
-        function compileScheduleForDate(date, dayNum, digit) {
-            // Clone standard baseline daily requirements cleanly
+        function renderSundayBrainstormer(dayOfWeek, dayNum) {
+            const card = document.getElementById('fibermaxxing-card');
+            if (dayOfWeek === 0) { // 0 = Sunday
+                const contentIndex = Math.floor(dayNum / 8) % fibermaxxingDatabase.length;
+                const data = fibermaxxingDatabase[contentIndex];
+
+                card.innerHTML = `
+                    <div class="bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-500/20 rounded-2xl p-4 shadow-xl">
+                        <div class="flex items-center gap-2 mb-3">
+                            <i data-lucide="wheat" class="w-4 h-4 text-emerald-400"></i>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-emerald-400">Sunday Fibermaxxing Brainstormer</h3>
+                        </div>
+                        <div class="space-y-3">
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Affordable Target Ingredients</span>
+                                <div class="flex flex-wrap gap-1">
+                                    ${data.ingredients.map(ing => `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/10">${ing}</span>`).join('')}
+                                </div>
+                            </div>
+                            <div>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Simple Weekly Menu Focus</span>
+                                <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
+                                    ${data.menu.map(item => `<li>${item}</li>`).join('')}
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                card.classList.remove('hidden');
+            } else {
+                card.classList.add('hidden');
+            }
+        }
+
+        function compileScheduleForDate(date, dayNum, digit, dayOfWeek) {
             let morningTasks = [...baseDailyHabits.morning];
             let afternoonTasks = [];
             let eveningTasks = [...baseDailyHabits.evening];
 
-            // 10-Day Sequence Rule Match Blocks
+            // FIXED DAY-OF-WEEK CAPACITY TASKS
+            if ([0, 1, 3, 4, 5].includes(dayOfWeek)) { // Sun, Mon, Wed, Thu, Fri
+                afternoonTasks.push("Water the garden");
+            }
+            if (dayOfWeek === 6) { // Saturday
+                afternoonTasks.push("Mow the lawn");
+            }
+
+            // 10-DAY ROTATION LOGIC ENGINE
             switch(digit) {
                 case 0:
                     morningTasks.push("Cut nails");
                     afternoonTasks.push("Rotate linens");
                     if (dayNum === 10) { 
-                        afternoonTasks.push("Dust ceilings (1st of month exception)");
-                        afternoonTasks.push("Dust lights (1st of month exception)");
+                        afternoonTasks.push("Dust ceilings (1st of month exception)", "Dust lights (1st of month exception)");
                     }
                     break;
                 case 1:
-                    afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
+                    afternoonTasks.push("Take out compost", "Sweep pavement");
+                    if (isAlternateDay1Occurrence(date)) {
+                        afternoonTasks.push("Big weeding day (Bi-weekly deep sweep)");
+                    } else {
+                        afternoonTasks.push("Pull weeds");
+                    }
                     eveningTasks.push("Refrigerator purge");
                     break;
                 case 2:
@@ -175,7 +238,9 @@ Chore Wheel and Personal Assistant
                 case 4:
                     afternoonTasks.push("Dust surfaces");
                     if (isAlternateDay4Occurrence(date)) {
-                        afternoonTasks.push("Shoe maintenance (Alternate day 4 choice)");
+                        afternoonTasks.push("Shoe maintenance");
+                    } else {
+                        afternoonTasks.push("Clean patio furniture (Bi-weekly alternative)");
                     }
                     break;
                 case 5:
@@ -190,19 +255,20 @@ Chore Wheel and Personal Assistant
                     break;
                 case 8:
                     morningTasks.push("Check nose hair", "Check ear hair", "Cut nails");
+                    if (dayNum === 8) afternoonTasks.push("Clear cobwebs from exterior crevasses");
+                    if (dayNum === 18) afternoonTasks.push("Clean exterior of windows");
+                    if (dayNum === 28) afternoonTasks.push("Clear cobwebs & touch up windows");
                     break;
                 case 9:
                     afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
                     break;
             }
 
-            const totalCount = morningTasks.length + afternoonTasks.length + eveningTasks.length;
-
             return {
                 morning: morningTasks,
                 afternoon: afternoonTasks,
                 evening: eveningTasks,
-                totalTaskCount: totalCount
+                totalTaskCount: morningTasks.length + afternoonTasks.length + eveningTasks.length
             };
         }
 
@@ -210,19 +276,26 @@ Chore Wheel and Personal Assistant
         function isLastDayEndingIn2(date) {
             const workingDate = new Date(date.getTime());
             workingDate.setDate(workingDate.getDate() + 10);
-            // If stepping forward 10 calendar days hits the next month, this execution block was the final day ending in 2
             return workingDate.getMonth() !== date.getMonth();
         }
 
         function isAlternateDay4Occurrence(date) {
             let count = 0;
-            let cursor = new Date(2026, 0, 1); // Ground reference point tracking line 2026
+            let cursor = new Date(2026, 0, 1); 
             const targetTime = date.getTime();
-
             while (cursor.getTime() <= targetTime) {
-                if (cursor.getDate() % 10 === 4) {
-                    count++;
-                }
+                if (cursor.getDate() % 10 === 4) count++;
+                cursor.setDate(cursor.getDate() + 1);
+            }
+            return count % 2 !== 0;
+        }
+
+        function isAlternateDay1Occurrence(date) {
+            let count = 0;
+            let cursor = new Date(2026, 0, 1);
+            const targetTime = date.getTime();
+            while (cursor.getTime() <= targetTime) {
+                if (cursor.getDate() % 10 === 1) count++;
                 cursor.setDate(cursor.getDate() + 1);
             }
             return count % 2 !== 0;
@@ -246,24 +319,15 @@ Chore Wheel and Personal Assistant
             const storageKey = getStorageKeyForDate(activeTrackingDate);
             const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
 
-            // Render columns
-            const morningDom = schedule.morning.map((task, i) => {
-                const id = `m-${i}-${task.replace(/\s+/g, '_').toLowerCase()}`;
-                return generateTaskDomString(task, 'm', i, !!savedState[id]);
-            }).join('');
-            document.getElementById('container-morning').innerHTML = morningDom || `<p class="text-xs text-slate-600 pl-1 italic">No tasks listed.</p>`;
-
-            const afternoonDom = schedule.afternoon.map((task, i) => {
-                const id = `a-${i}-${task.replace(/\s+/g, '_').toLowerCase()}`;
-                return generateTaskDomString(task, 'a', i, !!savedState[id]);
-            }).join('');
-            document.getElementById('container-afternoon').innerHTML = afternoonDom || `<p class="text-xs text-slate-600 pl-1 italic">No tasks listed.</p>`;
-
-            const eveningDom = schedule.evening.map((task, i) => {
-                const id = `e-${i}-${task.replace(/\s+/g, '_').toLowerCase()}`;
-                return generateTaskDomString(task, 'e', i, !!savedState[id]);
-            }).join('');
-            document.getElementById('container-evening').innerHTML = eveningDom || `<p class="text-xs text-slate-600 pl-1 italic">No tasks listed.</p>`;
+            const categories = ['morning', 'afternoon', 'evening'];
+            categories.forEach(cat => {
+                const prefix = cat.charAt(0);
+                const dom = schedule[cat].map((task, i) => {
+                    const id = `${prefix}-${i}-${task.replace(/\s+/g, '_').toLowerCase()}`;
+                    return generateTaskDomString(task, prefix, i, !!savedState[id]);
+                }).join('');
+                document.getElementById(`container-${cat}`).innerHTML = dom || `<p class="text-xs text-slate-600 pl-1 italic">No tasks listed.</p>`;
+            });
         }
 
         function toggleTaskState(taskId) {
@@ -273,7 +337,6 @@ Chore Wheel and Personal Assistant
             savedState[taskId] = !savedState[taskId];
             localStorage.setItem(storageKey, JSON.stringify(savedState));
 
-            // Perform direct soft layout alterations to feel ultra snappy on mobile views
             const textElement = document.getElementById(`text-${taskId}`);
             const boxElement = document.getElementById(`box-${taskId}`);
             const checkIcon = boxElement.querySelector('i');
@@ -288,12 +351,10 @@ Chore Wheel and Personal Assistant
                 if(checkIcon) checkIcon.classList.add('hidden');
             }
 
-            // Recalculate metrics totals dynamically
-            const dateInput = document.getElementById('date-simulator');
-            const targetDate = dateInput.value ? new Date(dateInput.value + 'T00:00:00') : new Date();
-            const currentDayNumber = targetDate.getDate();
+            const currentDayNumber = activeTrackingDate.getDate();
             const lastDigit = currentDayNumber % 10;
-            const currentScheduleData = compileScheduleForDate(targetDate, currentDayNumber, lastDigit);
+            const dayOfWeek = activeTrackingDate.getDay();
+            const currentScheduleData = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
             
             updateProgressMetrics(currentScheduleData.totalTaskCount);
         }
@@ -302,7 +363,6 @@ Chore Wheel and Personal Assistant
             const storageKey = getStorageKeyForDate(activeTrackingDate);
             const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
             
-            // Count trues matching current structural IDs
             const completedCount = Object.values(savedState).filter(Boolean).length;
             const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
 
