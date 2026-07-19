@@ -1,5 +1,4 @@
 # chore-wheel
-Chore Wheel and Personal Assistant
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -99,23 +98,23 @@ Chore Wheel and Personal Assistant
             evening: ["Dishes", "Wipe kitchen counters and table", "Spot clean kitchen/dining floors", "Floss"]
         };
 
-        // Budget-friendly seasonal fibermaxxing ideas cycling dynamically by month quadrant
+        // Standardized, recognizable meal rotations that combine fiber, carbs, and simple proteins
         const fibermaxxingDatabase = [
             {
-                ingredients: ["Rolled Oats", "Black Beans", "Carrots", "Chia Seeds", "Cabbage"],
-                menu: ["Warm savory black bean & oat bowls", "Slow-cooked garlic shredded cabbage & rice skillet", "Simple chia seed overnight pudding"]
+                ingredients: ["Black Beans", "Brown Rice", "Bell Peppers", "Chicken Breast", "Salsa"],
+                menu: ["Rice and bean burrito bowls with chicken", "Stuffed bell peppers (ground beef, rice, and black beans)", "Simple sheet-pan chicken & pepper fajitas"]
             },
             {
-                ingredients: ["Brown Lentils", "Sweet Potatoes", "Spinach", "Whole Wheat Bread", "Bananas"],
-                menu: ["Thick cumin brown lentil dal with rice", "Toasted whole wheat avocado/hummus toast smash", "Baked sweet potato boats stuffed with greens"]
+                ingredients: ["Sweet Potatoes", "Pinto Beans", "Ground Turkey", "Broccoli", "Cheddar Cheese"],
+                menu: ["Loaded baked sweet potatoes stuffed with pinto beans & turkey", "Ground turkey & broccoli stir-fry over brown rice", "Simple turkey chili with kidney beans"]
             },
             {
-                ingredients: ["Canned Chickpeas", "Broccoli", "Pinto Beans", "Flaxseed", "Onions"],
-                menu: ["Crispy pan-seared lemon chickpea wraps", "Pinto bean & onion dynamic skillet tacos", "Steam-charred broccoli over loaded fiber grain bowls"]
+                ingredients: ["Brown Lentils", "Carrots", "Celery", "Canned Tomatoes", "Whole Wheat Pasta"],
+                menu: ["Classic minestrone soup with whole wheat pasta", "Hearty lentil vegetable soup with whole wheat toast", "Baked chicken breasts with roasted carrots and red potatoes"]
             },
             {
-                ingredients: ["Split Peas", "Whole Wheat Pasta", "Kidney Beans", "Apples", "Sunflower Seeds"],
-                menu: ["Classic rich green split pea home soup", "Whole wheat pasta tossed with white beans & olive oil", "Apple slices paired with sunflower seed seed butter scaling"]
+                ingredients: ["Chickpeas", "Spinach", "Salmon or White Fish", "Quinoa", "Lemon & Garlic"],
+                menu: ["Pan-seared fish with roasted broccoli and quinoa", "White bean, sausage, and spinach skillet stew", "Mediterranean chicken and chickpea rice bowls"]
             }
         ];
 
@@ -150,7 +149,7 @@ Chore Wheel and Personal Assistant
             const badge = document.getElementById('digit-badge');
             badge.innerText = `Day Ending in [${lastDigit}]`;
 
-            // Evaluate Sunday Brainstormer Block Trigger
+            // Render Sunday Brainstormer Block Trigger
             renderSundayBrainstormer(dayOfWeek, currentDayNumber);
 
             const schedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
@@ -166,20 +165,20 @@ Chore Wheel and Personal Assistant
                 const data = fibermaxxingDatabase[contentIndex];
 
                 card.innerHTML = `
-                    <div class="bg-gradient-to-br from-emerald-950/40 to-slate-900 border border-emerald-500/20 rounded-2xl p-4 shadow-xl">
+                    <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/20 rounded-2xl p-4 shadow-xl">
                         <div class="flex items-center gap-2 mb-3">
-                            <i data-lucide="wheat" class="w-4 h-4 text-emerald-400"></i>
-                            <h3 class="text-xs font-black uppercase tracking-wider text-emerald-400">Sunday Fibermaxxing Brainstormer</h3>
+                            <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400"></i>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-emerald-400">Weekly Meal Blueprint (Sunday Idea Generator)</h3>
                         </div>
                         <div class="space-y-3">
                             <div>
-                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Affordable Target Ingredients</span>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Standard High-Fiber Grocery Targets</span>
                                 <div class="flex flex-wrap gap-1">
                                     ${data.ingredients.map(ing => `<span class="text-[10px] px-2 py-0.5 rounded-md bg-emerald-500/10 text-emerald-300 font-medium border border-emerald-500/10">${ing}</span>`).join('')}
                                 </div>
                             </div>
                             <div>
-                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Simple Weekly Menu Focus</span>
+                                <span class="text-[10px] uppercase font-bold text-slate-400 block mb-1">Simple No-Fuss Classics</span>
                                 <ul class="text-xs text-slate-300 space-y-1 list-disc list-inside">
                                     ${data.menu.map(item => `<li>${item}</li>`).join('')}
                                 </ul>
@@ -272,7 +271,6 @@ Chore Wheel and Personal Assistant
             };
         }
 
-        // Helper calculations for calendar boundaries
         function isLastDayEndingIn2(date) {
             const workingDate = new Date(date.getTime());
             workingDate.setDate(workingDate.getDate() + 10);
@@ -290,6 +288,7 @@ Chore Wheel and Personal Assistant
             return count % 2 !== 0;
         }
 
+        // Keep counting anchors locked to standard calendar grids
         function isAlternateDay1Occurrence(date) {
             let count = 0;
             let cursor = new Date(2026, 0, 1);
