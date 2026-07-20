@@ -15,6 +15,11 @@
         .custom-scrollbar::-webkit-scrollbar {
             display: none;
         }
+        /* Forces iOS and mobile browsers to honor momentum touch-scrolling inside fixed elements */
+        .mobile-scroll {
+            overflow-y: scroll !important;
+            -webkit-overflow-scrolling: touch;
+        }
     </style>
 </head>
 <body class="bg-slate-950 text-slate-100 h-full max-h-full flex flex-col overflow-hidden antialiased selection:bg-emerald-500/30 pb-[safe-area-inset-bottom]">
@@ -41,8 +46,9 @@
         </div>
     </header>
 
-    <!-- MAIN INTERACTIVE CONTAINER (Scrolls independently in the middle) -->
-    <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-8 overflow-y-auto custom-scrollbar">
+    <!-- MAIN INTERACTIVE CONTAINER (Independent mid-scroll layout) -->
+    <!-- min-h-0 is the magic key that prevents flex content from breaking mobile window scroll boundaries -->
+    <main class="flex-1 min-h-0 max-w-md w-full mx-auto p-4 space-y-8 mobile-scroll custom-scrollbar">
         
         <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
         <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
@@ -76,7 +82,7 @@
 
     </main>
 
-    <!-- DEBUG SYSTEM FOOTER (Anchored cleanly underneath the scrolling view) -->
+    <!-- DEBUG SYSTEM FOOTER (Completely locked outside the scrollable boundary) -->
     <footer class="bg-slate-950 border-t border-slate-900 p-4 shrink-0 z-40">
         <div class="max-w-md mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 flex-1">
@@ -433,7 +439,6 @@
             return count % 2 !== 0;
         }
 
-        // Lock execution limits precisely matching standard calendar boundaries
         function isAlternateDay1Occurrence(date) {
             let count = 0;
             let cursor = new Date(2026, 0, 1);
