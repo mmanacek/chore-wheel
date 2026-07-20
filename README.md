@@ -1,6 +1,6 @@
 # chore-wheel
 <!DOCTYPE html>
-<html lang="en" class="h-full">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
@@ -15,17 +15,12 @@
         .custom-scrollbar::-webkit-scrollbar {
             display: none;
         }
-        /* Forces iOS and mobile browsers to honor momentum touch-scrolling inside fixed elements */
-        .mobile-scroll {
-            overflow-y: scroll !important;
-            -webkit-overflow-scrolling: touch;
-        }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 h-full max-h-full flex flex-col overflow-hidden antialiased selection:bg-emerald-500/30 pb-[safe-area-inset-bottom]">
+<body class="bg-slate-950 text-slate-100 min-h-screen antialiased selection:bg-emerald-500/30">
 
-    <!-- HEADER BLOCK (Fixed at top) -->
-    <header class="bg-slate-950 border-b border-slate-900 px-4 py-4 shrink-0 pt-[safe-area-inset-top]">
+    <!-- HEADER BLOCK (Stays fixed at top naturally via sticky) -->
+    <header class="sticky top-0 z-40 bg-slate-950/95 backdrop-blur-md border-b border-slate-900 px-4 py-4 pt-[safe-area-inset-top]">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">CHORE WHEEL</h1>
@@ -46,9 +41,8 @@
         </div>
     </header>
 
-    <!-- MAIN INTERACTIVE CONTAINER (Independent mid-scroll layout) -->
-    <!-- min-h-0 is the magic key that prevents flex content from breaking mobile window scroll boundaries -->
-    <main class="flex-1 min-h-0 max-w-md w-full mx-auto p-4 space-y-8 mobile-scroll custom-scrollbar">
+    <!-- MAIN INTERACTIVE CONTAINER (Uses standard browser window scrolling) -->
+    <main class="max-w-md w-full mx-auto p-4 space-y-8">
         
         <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
         <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
@@ -80,10 +74,13 @@
             <div id="container-evening" class="space-y-4"></div>
         </div>
 
+        <!-- PHYSICAL LAYOUT SPACER (Guarantees content floats completely clear of fixed footer) -->
+        <div class="h-36 w-full aria-hidden='true'"></div>
+
     </main>
 
-    <!-- DEBUG SYSTEM FOOTER (Completely locked outside the scrollable boundary) -->
-    <footer class="bg-slate-950 border-t border-slate-900 p-4 shrink-0 z-40">
+    <!-- DEBUG SYSTEM FOOTER (Overlaid cleanly at the bottom) -->
+    <footer class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950/95 backdrop-blur-md border-t border-slate-900 z-40 pb-[calc(1rem+safe-area-inset-bottom)]">
         <div class="max-w-md mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 flex-1">
                 <i data-lucide="sliders" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
@@ -428,6 +425,7 @@
             return workingDate.getMonth() !== date.getMonth();
         }
 
+        // Standard calendar sequence loops
         function isAlternateDay4Occurrence(date) {
             let count = 0;
             let cursor = new Date(2026, 0, 1); 
