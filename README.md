@@ -42,7 +42,7 @@
     </header>
 
     <!-- MAIN INTERACTIVE CONTAINER -->
-    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-48 space-y-8 overflow-y-auto custom-scrollbar">
+    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-64 space-y-8 overflow-y-auto custom-scrollbar">
         
         <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
         <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
@@ -93,7 +93,6 @@
 
     <!-- ENGINE CODE -->
     <script>
-        // Core structural mapping separating hygiene baseline markers cleanly[cite: 1, 2]
         const baseDailyHabits = {
             morning: [
                 { text: "Get ready", isHygiene: true },
@@ -131,7 +130,6 @@
 
         let activeTrackingDate = new Date();
 
-        // Seeded stable random generator logic to balance wheel arrays without changing values on reload
         function seedRandom(str) {
             let hash = 0;
             for (let i = 0; i < str.length; i++) {
@@ -288,7 +286,6 @@
             return { morning, afternoon, evening };
         }
 
-        // Processing segment grouping hygiene tasks and randomly throwing chores down two balance streams
         function splitChoresBetweenSpouses(rawSchedule, dateKey) {
             const output = {
                 morning: { hygiene: [], me: [], wife: [] },
@@ -306,14 +303,12 @@
                 let chores = list.filter(t => !t.isHygiene);
                 output.totalTaskCount += list.length;
                 
-                // Shuffle chores deterministically based on date key + window phase value
                 const rng = seedRandom(dateKey + cat);
                 for (let i = chores.length - 1; i > 0; i--) {
                     const j = Math.floor(rng() * (i + 1));
                     [chores[i], chores[j]] = [chores[j], chores[i]];
                 }
 
-                // Balance arrays evenly into alternates
                 chores.forEach((chore, index) => {
                     if (index % 2 === 0) {
                         output[cat].me.push(chore);
@@ -343,8 +338,8 @@
             if (tasks.length === 0) return '';
             
             let colorClasses = "text-teal-400";
-            if (subId === 'me') colorClasses = "text-cyan-400";
-            if (subId === 'wife') colorClasses = "text-fuchsia-400";
+            if (subId.includes('me')) colorClasses = "text-cyan-400";
+            if (subId.includes('wf')) colorClasses = "text-fuchsia-400";
 
             const taskHtml = tasks.map((t, i) => {
                 const uniqueId = `${subId}-${t.text.replace(/\s+/g, '_').toLowerCase()}`;
@@ -368,9 +363,9 @@
                 const data = splitData[cat];
                 let htmlStr = '';
                 
-                htmlStr += renderSubSection(cat, "✨ Personal Hygiene", data.customHygiene || data.hygiene, `${cat}-hyg`, savedState);
-                htmlStr += renderSubSection(cat, "🧔 Chores: Me", data.me, `${cat}-me`, savedState);
-                htmlStr += renderSubSection(cat, "👩 Chores: Wife", data.wife, `${cat}-wf`, savedState);
+                htmlStr += renderSubSection(cat, "✨ Mitch's Hygiene", data.hygiene, `${cat}-hyg`, savedState);
+                htmlStr += renderSubSection(cat, "🧔 Mitch's Chores", data.me, `${cat}-me`, savedState);
+                htmlStr += renderSubSection(cat, "👩 Sarah's Chores", data.wife, `${cat}-wf`, savedState);
                 
                 if(!htmlStr) {
                     htmlStr = `<p class="text-xs text-slate-600 pl-1 italic">No tasks assigned today.</p>`;
