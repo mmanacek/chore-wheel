@@ -1,9 +1,9 @@
 # chore-wheel
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="h-full">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <title>Chore Wheel Engine</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
@@ -17,10 +17,10 @@
         }
     </style>
 </head>
-<body class="bg-slate-950 text-slate-100 min-h-screen flex flex-col antialiased selection:bg-emerald-500/30">
+<body class="bg-slate-950 text-slate-100 h-full max-h-full flex flex-col overflow-hidden antialiased selection:bg-emerald-500/30 pb-[safe-area-inset-bottom]">
 
-    <!-- HEADER BLOCK -->
-    <header class="sticky top-0 z-40 bg-slate-950/90 backdrop-blur-md border-b border-slate-900 px-4 py-4">
+    <!-- HEADER BLOCK (Fixed at top) -->
+    <header class="bg-slate-950 border-b border-slate-900 px-4 py-4 shrink-0 pt-[safe-area-inset-top]">
         <div class="max-w-md mx-auto flex items-center justify-between">
             <div>
                 <h1 class="text-xl font-black tracking-tight bg-gradient-to-r from-emerald-400 via-teal-400 to-cyan-400 bg-clip-text text-transparent">CHORE WHEEL</h1>
@@ -41,8 +41,8 @@
         </div>
     </header>
 
-    <!-- MAIN INTERACTIVE CONTAINER -->
-    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-64 space-y-8 overflow-y-auto custom-scrollbar">
+    <!-- MAIN INTERACTIVE CONTAINER (Scrolls independently in the middle) -->
+    <main class="flex-1 max-w-md w-full mx-auto p-4 space-y-8 overflow-y-auto custom-scrollbar">
         
         <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
         <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
@@ -76,8 +76,8 @@
 
     </main>
 
-    <!-- DEBUG SYSTEM FOOTER -->
-    <footer class="fixed bottom-0 left-0 right-0 p-4 bg-slate-950 border-t border-slate-900 z-40 bg-gradient-to-t from-slate-950 via-slate-950 to-slate-950/95">
+    <!-- DEBUG SYSTEM FOOTER (Anchored cleanly underneath the scrolling view) -->
+    <footer class="bg-slate-950 border-t border-slate-900 p-4 shrink-0 z-40">
         <div class="max-w-md mx-auto flex items-center justify-between gap-4">
             <div class="flex items-center gap-2 bg-slate-900 border border-slate-800 rounded-xl px-2.5 py-1.5 flex-1">
                 <i data-lucide="sliders" class="w-3.5 h-3.5 text-slate-400 shrink-0"></i>
@@ -433,6 +433,7 @@
             return count % 2 !== 0;
         }
 
+        // Lock execution limits precisely matching standard calendar boundaries
         function isAlternateDay1Occurrence(date) {
             let count = 0;
             let cursor = new Date(2026, 0, 1);
