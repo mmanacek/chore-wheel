@@ -42,36 +42,36 @@
     </header>
 
     <!-- MAIN INTERACTIVE CONTAINER -->
-    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-28 space-y-6 overflow-y-auto custom-scrollbar">
+    <main class="flex-1 max-w-md w-full mx-auto p-4 pb-48 space-y-8 overflow-y-auto custom-scrollbar">
         
         <!-- SUNDAY FIBERMAXXING BRAINSTORMER MODULATOR -->
         <div id="fibermaxxing-card" class="hidden transform transition-all duration-300"></div>
 
         <!-- MORNING TIMELINE SECTION -->
-        <div id="sec-morning" class="space-y-2.5">
-            <div class="flex items-center gap-2 px-1 mb-1">
+        <div id="sec-morning" class="space-y-3">
+            <div class="flex items-center gap-2 px-1 mb-1 border-b border-slate-900 pb-1">
                 <i data-lucide="sunrise" class="w-4 h-4 text-amber-400"></i>
-                <h2 class="text-xs font-bold tracking-wider uppercase text-slate-400">Morning Routine</h2>
+                <h2 class="text-xs font-black tracking-wider uppercase text-slate-400">Morning Routine</h2>
             </div>
-            <div id="container-morning" class="space-y-2"></div>
+            <div id="container-morning" class="space-y-4"></div>
         </div>
 
         <!-- AFTERNOON TIMELINE SECTION -->
-        <div id="sec-afternoon" class="space-y-2.5">
-            <div class="flex items-center gap-2 px-1 mb-1">
+        <div id="sec-afternoon" class="space-y-3">
+            <div class="flex items-center gap-2 px-1 mb-1 border-b border-slate-900 pb-1">
                 <i data-lucide="sun" class="w-4 h-4 text-emerald-400"></i>
-                <h2 class="text-xs font-bold tracking-wider uppercase text-slate-400">Afternoon Targets</h2>
+                <h2 class="text-xs font-black tracking-wider uppercase text-slate-400">Afternoon Targets</h2>
             </div>
-            <div id="container-afternoon" class="space-y-2"></div>
+            <div id="container-afternoon" class="space-y-4"></div>
         </div>
 
         <!-- EVENING TIMELINE SECTION -->
-        <div id="sec-evening" class="space-y-2.5">
-            <div class="flex items-center gap-2 px-1 mb-1">
+        <div id="sec-evening" class="space-y-3">
+            <div class="flex items-center gap-2 px-1 mb-1 border-b border-slate-900 pb-1">
                 <i data-lucide="moon" class="w-4 h-4 text-indigo-400"></i>
-                <h2 class="text-xs font-bold tracking-wider uppercase text-slate-400">Evening Wrap-Up</h2>
+                <h2 class="text-xs font-black tracking-wider uppercase text-slate-400">Evening Wrap-Up</h2>
             </div>
-            <div id="container-evening" class="space-y-2"></div>
+            <div id="container-evening" class="space-y-4"></div>
         </div>
 
     </main>
@@ -93,12 +93,23 @@
 
     <!-- ENGINE CODE -->
     <script>
+        // Core structural mapping separating hygiene baseline markers cleanly[cite: 1, 2]
         const baseDailyHabits = {
-            morning: ["Get ready", "Wipe bathroom surfaces", "Moisturize", "Make bed", "Tidy 1 room"],
-            evening: ["Dishes", "Wipe kitchen counters and table", "Spot clean kitchen/dining floors", "Floss"]
+            morning: [
+                { text: "Get ready", isHygiene: true },
+                { text: "Wipe bathroom surfaces", isHygiene: false },
+                { text: "Moisturize", isHygiene: true },
+                { text: "Make bed", isHygiene: false },
+                { text: "Tidy 1 room", isHygiene: false }
+            ],
+            evening: [
+                { text: "Dishes", isHygiene: false },
+                { text: "Wipe kitchen counters and table", isHygiene: false },
+                { text: "Spot clean kitchen/dining floors", isHygiene: false },
+                { text: "Floss", isHygiene: true }
+            ]
         };
 
-        // Standardized, recognizable meal rotations that combine fiber, carbs, and simple proteins
         const fibermaxxingDatabase = [
             {
                 ingredients: ["Black Beans", "Brown Rice", "Bell Peppers", "Chicken Breast", "Salsa"],
@@ -120,6 +131,18 @@
 
         let activeTrackingDate = new Date();
 
+        // Seeded stable random generator logic to balance wheel arrays without changing values on reload
+        function seedRandom(str) {
+            let hash = 0;
+            for (let i = 0; i < str.length; i++) {
+                hash = str.charCodeAt(i) + ((hash << 5) - hash);
+            }
+            return function() {
+                let x = Math.sin(hash++) * 10000;
+                return x - Math.floor(x);
+            };
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             const dateInput = document.getElementById('date-simulator');
             dateInput.value = activeTrackingDate.toISOString().split('T')[0];
@@ -135,7 +158,7 @@
         });
 
         function getStorageKeyForDate(date) {
-            return `chore_wheel_v2_${date.toISOString().split('T')[0]}`;
+            return `chore_wheel_v3_${date.toISOString().split('T')[0]}`;
         }
 
         function processAppEngineCycle() {
@@ -149,18 +172,19 @@
             const badge = document.getElementById('digit-badge');
             badge.innerText = `Day Ending in [${lastDigit}]`;
 
-            // Render Sunday Brainstormer Block Trigger
             renderSundayBrainstormer(dayOfWeek, currentDayNumber);
 
-            const schedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
-            renderTimelineColumns(schedule);
-            updateProgressMetrics(schedule.totalTaskCount);
+            const rawSchedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
+            const finalizedSplitData = splitChoresBetweenSpouses(rawSchedule, getStorageKeyForDate(activeTrackingDate));
+            
+            renderTimelineColumns(finalizedSplitData);
+            updateProgressMetrics(finalizedSplitData.totalTaskCount);
             lucide.createIcons();
         }
 
         function renderSundayBrainstormer(dayOfWeek, dayNum) {
             const card = document.getElementById('fibermaxxing-card');
-            if (dayOfWeek === 0) { // 0 = Sunday
+            if (dayOfWeek === 0) {
                 const contentIndex = Math.floor(dayNum / 8) % fibermaxxingDatabase.length;
                 const data = fibermaxxingDatabase[contentIndex];
 
@@ -168,7 +192,7 @@
                     <div class="bg-gradient-to-br from-slate-900 to-slate-950 border border-emerald-500/20 rounded-2xl p-4 shadow-xl">
                         <div class="flex items-center gap-2 mb-3">
                             <i data-lucide="shopping-bag" class="w-4 h-4 text-emerald-400"></i>
-                            <h3 class="text-xs font-black uppercase tracking-wider text-emerald-400">Weekly Meal Blueprint (Sunday Idea Generator)</h3>
+                            <h3 class="text-xs font-black uppercase tracking-wider text-emerald-400">Weekly Meal Blueprint</h3>
                         </div>
                         <div class="space-y-3">
                             <div>
@@ -193,82 +217,208 @@
         }
 
         function compileScheduleForDate(date, dayNum, digit, dayOfWeek) {
-            let morningTasks = [...baseDailyHabits.morning];
-            let afternoonTasks = [];
-            let eveningTasks = [...baseDailyHabits.evening];
+            let morning = [...baseDailyHabits.morning];
+            let afternoon = [];
+            let evening = [...baseDailyHabits.evening];
 
-            // FIXED DAY-OF-WEEK CAPACITY TASKS
-            if ([0, 1, 3, 4, 5].includes(dayOfWeek)) { // Sun, Mon, Wed, Thu, Fri
-                afternoonTasks.push("Water the garden");
+            if ([0, 1, 3, 4, 5].includes(dayOfWeek)) {
+                afternoon.push({ text: "Water the garden", isHygiene: false });
             }
-            if (dayOfWeek === 6) { // Saturday
-                afternoonTasks.push("Mow the lawn");
+            if (dayOfWeek === 6) {
+                afternoon.push({ text: "Mow the lawn", isHygiene: false });
             }
 
-            // 10-DAY ROTATION LOGIC ENGINE
             switch(digit) {
                 case 0:
-                    morningTasks.push("Cut nails");
-                    afternoonTasks.push("Rotate linens");
+                    morning.push({ text: "Cut nails", isHygiene: true });
+                    afternoon.push({ text: "Rotate linens", isHygiene: false });
                     if (dayNum === 10) { 
-                        afternoonTasks.push("Dust ceilings (1st of month exception)", "Dust lights (1st of month exception)");
+                        afternoon.push({ text: "Dust ceilings (1st of month exception)", isHygiene: false }, { text: "Dust lights (1st of month exception)", isHygiene: false });
                     }
                     break;
                 case 1:
-                    afternoonTasks.push("Take out compost", "Sweep pavement");
+                    afternoon.push({ text: "Take out compost", isHygiene: false }, { text: "Sweep pavement", isHygiene: false });
                     if (isAlternateDay1Occurrence(date)) {
-                        afternoonTasks.push("Big weeding day (Bi-weekly deep sweep)");
+                        afternoon.push({ text: "Big weeding day (Bi-weekly deep sweep)", isHygiene: false });
                     } else {
-                        afternoonTasks.push("Pull weeds");
+                        afternoon.push({ text: "Pull weeds", isHygiene: false });
                     }
-                    eveningTasks.push("Refrigerator purge");
+                    evening.push({ text: "Refrigerator purge", isHygiene: false });
                     break;
                 case 2:
-                    morningTasks.push("Trim beard");
-                    afternoonTasks.push("Vacuum", "Sanitize high-touch surfaces");
+                    morning.push({ text: "Trim beard", isHygiene: true });
+                    afternoon.push({ text: "Vacuum", isHygiene: false }, { text: "Sanitize high-touch surfaces", isHygiene: false });
                     if (isLastDayEndingIn2(date)) {
-                        afternoonTasks.push("Wipe out trash bins (End of month exception)");
+                        afternoon.push({ text: "Wipe out trash bins (End of month exception)", isHygiene: false });
                     }
-                    eveningTasks.push("Wipe microwave");
+                    evening.push({ text: "Wipe microwave", isHygiene: false });
                     break;
                 case 3:
-                    afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
+                    afternoon.push({ text: "Take out compost", isHygiene: false }, { text: "Sweep pavement", isHygiene: false }, { text: "Pull weeds", isHygiene: false });
                     break;
                 case 4:
-                    afternoonTasks.push("Dust surfaces");
+                    afternoon.push({ text: "Dust surfaces", isHygiene: false });
                     if (isAlternateDay4Occurrence(date)) {
-                        afternoonTasks.push("Shoe maintenance");
+                        afternoon.push({ text: "Shoe maintenance", isHygiene: false });
                     } else {
-                        afternoonTasks.push("Clean patio furniture (Bi-weekly alternative)");
+                        afternoon.push({ text: "Clean patio furniture (Bi-weekly alternative)", isHygiene: false });
                     }
                     break;
                 case 5:
-                    afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
+                    afternoon.push({ text: "Take out compost", isHygiene: false }, { text: "Sweep pavement", isHygiene: false }, { text: "Pull weeds", isHygiene: false });
                     break;
                 case 6:
-                    morningTasks.push("Trim beard");
-                    afternoonTasks.push("Vacuum", "Sanitize high-touch surfaces");
+                    morning.push({ text: "Trim beard", isHygiene: true });
+                    afternoon.push({ text: "Vacuum", isHygiene: false }, { text: "Sanitize high-touch surfaces", isHygiene: false });
                     break;
                 case 7:
-                    afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
+                    afternoon.push({ text: "Take out compost", isHygiene: false }, { text: "Sweep pavement", isHygiene: false }, { text: "Pull weeds", isHygiene: false });
                     break;
                 case 8:
-                    morningTasks.push("Check nose hair", "Check ear hair", "Cut nails");
-                    if (dayNum === 8) afternoonTasks.push("Clear cobwebs from exterior crevasses");
-                    if (dayNum === 18) afternoonTasks.push("Clean exterior of windows");
-                    if (dayNum === 28) afternoonTasks.push("Clear cobwebs & touch up windows");
+                    morning.push({ text: "Check nose hair", isHygiene: true }, { text: "Check ear hair", isHygiene: true }, { text: "Cut nails", isHygiene: true });
+                    if (dayNum === 8) afternoon.push({ text: "Clear cobwebs from exterior crevasses", isHygiene: false });
+                    if (dayNum === 18) afternoon.push({ text: "Clean exterior of windows", isHygiene: false });
+                    if (dayNum === 28) afternoon.push({ text: "Clear cobwebs & touch up windows", isHygiene: false });
                     break;
                 case 9:
-                    afternoonTasks.push("Take out compost", "Sweep pavement", "Pull weeds");
+                    afternoon.push({ text: "Take out compost", isHygiene: false }, { text: "Sweep pavement", isHygiene: false }, { text: "Pull weeds", isHygiene: false });
                     break;
             }
 
-            return {
-                morning: morningTasks,
-                afternoon: afternoonTasks,
-                evening: eveningTasks,
-                totalTaskCount: morningTasks.length + afternoonTasks.length + eveningTasks.length
+            return { morning, afternoon, evening };
+        }
+
+        // Processing segment grouping hygiene tasks and randomly throwing chores down two balance streams
+        function splitChoresBetweenSpouses(rawSchedule, dateKey) {
+            const output = {
+                morning: { hygiene: [], me: [], wife: [] },
+                afternoon: { hygiene: [], me: [], wife: [] },
+                evening: { hygiene: [], me: [], wife: [] },
+                totalTaskCount: 0
             };
+
+            const categories = ['morning', 'afternoon', 'evening'];
+            
+            categories.forEach(cat => {
+                const list = rawSchedule[cat];
+                output[cat].hygiene = list.filter(t => t.isHygiene);
+                
+                let chores = list.filter(t => !t.isHygiene);
+                output.totalTaskCount += list.length;
+                
+                // Shuffle chores deterministically based on date key + window phase value
+                const rng = seedRandom(dateKey + cat);
+                for (let i = chores.length - 1; i > 0; i--) {
+                    const j = Math.floor(rng() * (i + 1));
+                    [chores[i], chores[j]] = [chores[j], chores[i]];
+                }
+
+                // Balance arrays evenly into alternates
+                chores.forEach((chore, index) => {
+                    if (index % 2 === 0) {
+                        output[cat].me.push(chore);
+                    } else {
+                        output[cat].wife.push(chore);
+                    }
+                });
+            });
+
+            return output;
+        }
+
+        function generateTaskDomString(taskText, uniqueId, isChecked) {
+            return `
+                <div onclick="toggleTaskState('${uniqueId}')" class="flex items-center justify-between p-3.5 rounded-xl border border-slate-900 bg-slate-900/30 hover:bg-slate-900/60 transition-all duration-150 cursor-pointer group active:bg-slate-900">
+                    <span class="text-xs font-semibold text-slate-300 group-hover:text-slate-100 transition-colors pr-3 flex-1 select-none ${isChecked ? 'line-through !text-slate-600 font-medium' : ''}" id="text-${uniqueId}">
+                        ${taskText}
+                    </span>
+                    <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${isChecked ? 'bg-emerald-500 border-emerald-500 text-slate-950' : 'border-slate-800 bg-slate-950 group-hover:border-slate-600'}" id="box-${uniqueId}">
+                        <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3.5] ${isChecked ? 'block' : 'hidden'}"></i>
+                    </div>
+                </div>
+            `;
+        }
+
+        function renderSubSection(container, label, tasks, subId, savedState) {
+            if (tasks.length === 0) return '';
+            
+            let colorClasses = "text-teal-400";
+            if (subId === 'me') colorClasses = "text-cyan-400";
+            if (subId === 'wife') colorClasses = "text-fuchsia-400";
+
+            const taskHtml = tasks.map((t, i) => {
+                const uniqueId = `${subId}-${t.text.replace(/\s+/g, '_').toLowerCase()}`;
+                return generateTaskDomString(t.text, uniqueId, !!savedState[uniqueId]);
+            }).join('');
+
+            return `
+                <div class="space-y-1.5">
+                    <div class="text-[10px] font-black uppercase tracking-wider pl-1 ${colorClasses}">${label}</div>
+                    <div class="space-y-1.5">${taskHtml}</div>
+                </div>
+            `;
+        }
+
+        function renderTimelineColumns(splitData) {
+            const storageKey = getStorageKeyForDate(activeTrackingDate);
+            const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
+
+            const categories = ['morning', 'afternoon', 'evening'];
+            categories.forEach(cat => {
+                const data = splitData[cat];
+                let htmlStr = '';
+                
+                htmlStr += renderSubSection(cat, "✨ Personal Hygiene", data.customHygiene || data.hygiene, `${cat}-hyg`, savedState);
+                htmlStr += renderSubSection(cat, "🧔 Chores: Me", data.me, `${cat}-me`, savedState);
+                htmlStr += renderSubSection(cat, "👩 Chores: Wife", data.wife, `${cat}-wf`, savedState);
+                
+                if(!htmlStr) {
+                    htmlStr = `<p class="text-xs text-slate-600 pl-1 italic">No tasks assigned today.</p>`;
+                }
+                
+                document.getElementById(`container-${cat}`).innerHTML = htmlStr;
+            });
+        }
+
+        function toggleTaskState(uniqueId) {
+            const storageKey = getStorageKeyForDate(activeTrackingDate);
+            let savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
+            
+            savedState[uniqueId] = !savedState[uniqueId];
+            localStorage.setItem(storageKey, JSON.stringify(savedState));
+
+            const textElement = document.getElementById(`text-${uniqueId}`);
+            const boxElement = document.getElementById(`box-${uniqueId}`);
+            const checkIcon = boxElement.querySelector('i');
+
+            if (savedState[uniqueId]) {
+                textElement.classList.add('line-through', '!text-slate-600', 'font-medium');
+                boxElement.className = "w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 bg-emerald-500 border-emerald-500 text-slate-950";
+                if(checkIcon) checkIcon.classList.remove('hidden');
+            } else {
+                textElement.classList.remove('line-through', '!text-slate-600', 'font-medium');
+                boxElement.className = "w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 border-slate-800 bg-slate-950";
+                if(checkIcon) checkIcon.classList.add('hidden');
+            }
+
+            const currentDayNumber = activeTrackingDate.getDate();
+            const lastDigit = currentDayNumber % 10;
+            const dayOfWeek = activeTrackingDate.getDay();
+            const rawSchedule = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
+            const finalizedSplitData = splitChoresBetweenSpouses(rawSchedule, storageKey);
+            
+            updateProgressMetrics(finalizedSplitData.totalTaskCount);
+        }
+
+        function updateProgressMetrics(totalCount) {
+            const storageKey = getStorageKeyForDate(activeTrackingDate);
+            const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
+            
+            const completedCount = Object.values(savedState).filter(Boolean).length;
+            const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
+
+            document.getElementById('progress-text').innerText = `${percentage}%`;
+            document.getElementById('progress-ring').setAttribute('stroke-dasharray', `${percentage}, 100`);
         }
 
         function isLastDayEndingIn2(date) {
@@ -288,7 +438,6 @@
             return count % 2 !== 0;
         }
 
-        // Keep counting anchors locked to standard calendar grids
         function isAlternateDay1Occurrence(date) {
             let count = 0;
             let cursor = new Date(2026, 0, 1);
@@ -298,75 +447,6 @@
                 cursor.setDate(cursor.getDate() + 1);
             }
             return count % 2 !== 0;
-        }
-
-        function generateTaskDomString(taskText, categoryId, index, isChecked) {
-            const uniqueTaskId = `${categoryId}-${index}-${taskText.replace(/\s+/g, '_').toLowerCase()}`;
-            return `
-                <div onclick="toggleTaskState('${uniqueTaskId}')" class="flex items-center justify-between p-3.5 rounded-xl border border-slate-900 bg-slate-900/30 hover:bg-slate-900/60 transition-all duration-150 cursor-pointer group active:bg-slate-900">
-                    <span class="text-xs font-semibold text-slate-300 group-hover:text-slate-100 transition-colors pr-3 flex-1 select-none ${isChecked ? 'line-through !text-slate-600 font-medium' : ''}" id="text-${uniqueTaskId}">
-                        ${taskText}
-                    </span>
-                    <div class="w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 ${isChecked ? 'bg-emerald-500 border-emerald-500 text-slate-950' : 'border-slate-800 bg-slate-950 group-hover:border-slate-600'}" id="box-${uniqueTaskId}">
-                        <i data-lucide="check" class="w-3.5 h-3.5 stroke-[3.5] ${isChecked ? 'block' : 'hidden'}"></i>
-                    </div>
-                </div>
-            `;
-        }
-
-        function renderTimelineColumns(schedule) {
-            const storageKey = getStorageKeyForDate(activeTrackingDate);
-            const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
-
-            const categories = ['morning', 'afternoon', 'evening'];
-            categories.forEach(cat => {
-                const prefix = cat.charAt(0);
-                const dom = schedule[cat].map((task, i) => {
-                    const id = `${prefix}-${i}-${task.replace(/\s+/g, '_').toLowerCase()}`;
-                    return generateTaskDomString(task, prefix, i, !!savedState[id]);
-                }).join('');
-                document.getElementById(`container-${cat}`).innerHTML = dom || `<p class="text-xs text-slate-600 pl-1 italic">No tasks listed.</p>`;
-            });
-        }
-
-        function toggleTaskState(taskId) {
-            const storageKey = getStorageKeyForDate(activeTrackingDate);
-            let savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
-            
-            savedState[taskId] = !savedState[taskId];
-            localStorage.setItem(storageKey, JSON.stringify(savedState));
-
-            const textElement = document.getElementById(`text-${taskId}`);
-            const boxElement = document.getElementById(`box-${taskId}`);
-            const checkIcon = boxElement.querySelector('i');
-
-            if (savedState[taskId]) {
-                textElement.classList.add('line-through', '!text-slate-600', 'font-medium');
-                boxElement.className = "w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 bg-emerald-500 border-emerald-500 text-slate-950";
-                if(checkIcon) checkIcon.classList.remove('hidden');
-            } else {
-                textElement.classList.remove('line-through', '!text-slate-600', 'font-medium');
-                boxElement.className = "w-5 h-5 rounded-md border flex items-center justify-center transition-all shrink-0 border-slate-800 bg-slate-950";
-                if(checkIcon) checkIcon.classList.add('hidden');
-            }
-
-            const currentDayNumber = activeTrackingDate.getDate();
-            const lastDigit = currentDayNumber % 10;
-            const dayOfWeek = activeTrackingDate.getDay();
-            const currentScheduleData = compileScheduleForDate(activeTrackingDate, currentDayNumber, lastDigit, dayOfWeek);
-            
-            updateProgressMetrics(currentScheduleData.totalTaskCount);
-        }
-
-        function updateProgressMetrics(totalCount) {
-            const storageKey = getStorageKeyForDate(activeTrackingDate);
-            const savedState = JSON.parse(localStorage.getItem(storageKey)) || {};
-            
-            const completedCount = Object.values(savedState).filter(Boolean).length;
-            const percentage = totalCount > 0 ? Math.round((completedCount / totalCount) * 100) : 0;
-
-            document.getElementById('progress-text').innerText = `${percentage}%`;
-            document.getElementById('progress-ring').setAttribute('stroke-dasharray', `${percentage}, 100`);
         }
 
         function clearCurrentDayProgress() {
